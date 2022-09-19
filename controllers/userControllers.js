@@ -1,5 +1,6 @@
 const Users = require('../models/Users');
 const jwt = require('jsonwebtoken');
+const outputUser = require('../models/outputUser');
 
 const maxAge = 3 * 24 * 60 * 60;
 const createToken = (id) => {
@@ -9,17 +10,30 @@ const createToken = (id) => {
 }
 
 const user_signup = async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password, fName, lName, email } = req.body;
     try {
         const user = await Users.create({
             username,
-            password
+            password,
+            fName,
+            lName,
+            email
         });
         const token = createToken(user._id);
         res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
-        res.json({ user: user._id });
+        res.json(outputUser(user));
     } catch (e) {
-        res.send(e.message);
+        if (e.code === 11000) {
+            const message = Object.keys(e.keyValue)[0]
+            console.log(message)
+            if (message === "username") {
+                res.json({ error: e.code, duplicateKey: message, message: "Username already exist" })
+            } else if (message === "email") {
+                res.json({ error: e.code, duplicateKey: message, message: "Email already exist" })
+            }
+        } else {
+            res.json({ error: e, message: e.message })
+        }
     }
 }
 
@@ -29,28 +43,27 @@ const user_login = async (req, res) => {
         const user = await Users.login(username, password);
         const token = createToken(user._id);
         res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
-        res.json(user);
-    } catch(e) {
+        res.json(outputUser(user));
+    } catch (e) {
         console.log(e.message)
         res.json(e.message)
     }
 }
 
 const user_logout = (req, res) => {
-    res.cookie('jwt', '', {maxAge: 1});
+    console.log('triggered')
+    res.cookie('jwt', '', { maxAge: 1 });
     res.end();
 }
 
-// DEBUG PURPOSES - TO BE REMOVED
-const user_posts = (req, res) => {
-    res.json({
-        message: "Success"
-    });
+// Check user JWT and return user data from DB
+const user_check = (req, res) => {
+    res.json(res.locals.user)
 }
 
 module.exports = {
     user_signup,
     user_login,
-    user_posts,
-    user_logout
+    user_logout,
+    user_check,
 }

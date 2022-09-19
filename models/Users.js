@@ -13,7 +13,21 @@ const userSchema = new Schema({
         type: String,
         required: [true, "Password is required"],
         minLength: [6, "Min password length is 6 characters"]
-    }
+    },
+    fName: {
+        type: String
+    },
+    lName: {
+        type: String
+    },
+    email: {
+        type: String,
+        unique: true
+    },
+    posts: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Posts'
+    }]
 })
 
 // Encrypt passwords with bcrypt - Middleware

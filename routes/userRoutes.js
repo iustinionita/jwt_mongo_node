@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const userControllers = require('../controllers/userControllers');
-const { requireAuth, checkUser } = require('../jwt/requireAuth');
+const { requireAuth } = require('../jwt/requireAuth');
 
-router.post("/signup", userControllers.user_signup);
-router.post("/login", userControllers.user_login);
-router.get('/logout', requireAuth, userControllers.user_logout);
-router.get('/posts', requireAuth, userControllers.user_posts);
+router.post('/signup', userControllers.user_signup);
+router.post('/login', userControllers.user_login);
+router.post('/logout', requireAuth, userControllers.user_logout);
+router.post('/check', requireAuth, userControllers.user_check);
 
 module.exports = router;
