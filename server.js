@@ -8,6 +8,7 @@ const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
 const fileUpload = require("express-fileupload");
 
+// Mongoose Setup
 mongoose.connect(process.env.DBURI,
     () => {
         console.log("Connected to DB")

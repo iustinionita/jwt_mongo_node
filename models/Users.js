@@ -28,6 +28,8 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Posts'
     }]
+}, {
+    timestamps: true
 })
 
 // Encrypt passwords with bcrypt - Middleware

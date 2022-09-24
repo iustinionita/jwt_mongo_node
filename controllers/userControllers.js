@@ -51,9 +51,27 @@ const user_login = async (req, res) => {
 }
 
 const user_logout = (req, res) => {
-    console.log('triggered')
     res.cookie('jwt', '', { maxAge: 1 });
     res.end();
+}
+
+// Get own posts
+const user_own_posts = async (req, res) => {
+    const { skip } = req.body;
+    try {
+        const posts = await Users.find({ _id: res.locals.userId }).populate({
+            path: 'posts',
+            options: {
+                limit: 5,
+                skip: skip,
+                sort: {createdAt: -1}
+            }
+        }).exec();
+        res.json(posts)
+    } catch(e) {
+        console.log(e.message);
+        res.json(e.message)
+    }
 }
 
 // Check user JWT and return user data from DB
@@ -66,4 +84,5 @@ module.exports = {
     user_login,
     user_logout,
     user_check,
+    user_own_posts
 }

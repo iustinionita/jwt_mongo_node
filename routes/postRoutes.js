@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const postControllers = require('../controllers/postControllers');
-const { requireAuth } = require('../jwt/requireAuth');
+const { requireLogin } = require('../jwt/requireAuth');
 
-router.post('/new-post', postControllers.post_create);
-router.post('/get-posts', postControllers.post_get);
+router.post('/new-post',requireLogin, postControllers.post_create);
+router.post('/get-posts', requireLogin, postControllers.post_get);
+router.post('/check-likes', requireLogin, postControllers.post_like_check);
+router.post('/like', requireLogin, postControllers.post_like);
 
 module.exports = router;
