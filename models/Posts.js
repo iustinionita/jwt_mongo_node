@@ -39,14 +39,24 @@ postSchema.statics.like = async function (id, user) {
     })
 
     if (checkLikes.length === 0) {
-        const likedPost = await this.findByIdAndUpdate(id, { $push: { "likes": [user] } });
-        console.log(`Liked ${likedPost}`)
+        // const likedPost = await this.findByIdAndUpdate(id, { $push: { "likes": [user] } });
+        // console.log(`Liked ${likedPost}`)
+        await this.findByIdAndUpdate(id, { $push: { "likes": [user] } });
         return { liked: true }
     } else {
-        console.log("Already liked");
+        // console.log("Already liked. Dislike triggered");
         return { liked: false }
     }
 
+}
+
+postSchema.statics.dislike = async function (id, user) {
+    const dislikedPost = await this.findByIdAndUpdate(id, { $pull: { "likes": user } });
+    if (dislikedPost) {
+        return { disliked: true }
+    } else {
+        return { disliked: false }
+    }
 }
 
 // GET LIKES BY USER ID

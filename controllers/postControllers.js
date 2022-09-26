@@ -1,4 +1,3 @@
-// const mongoose = require('mongoose');
 const Posts = require('../models/Posts');
 const Users = require('../models/Users');
 
@@ -28,7 +27,7 @@ const post_get = async (req, res) => {
         let posts;
         if (creator === undefined && public !== undefined) {
             // posts = await Posts.find().where('public').equals(public).sort([['createdAt', -1]]).skip(skip);
-            posts = await Posts.find({ public: public }).sort([['createdAt', -1]]).skip(skip).limit(5);
+            posts = await Posts.find({ public: public }).sort([['createdAt', -1]]).skip(skip).limit(5).populate('creator').exec();
         } else if (public !== undefined) {
             posts = await Posts.find().where('creator').equals(creator).where('public').equals(public).skip(skip).limit(5).populate().exec();
             // console.log(posts)
@@ -54,12 +53,30 @@ const post_like_check = async (req, res) => {
 }
 
 const post_like = async (req, res) => {
-    const { id, user } = req.body;
-    if (id && user) {
-        const like = await Posts.like(id, user)
-        res.json(like)
-    } else {
-        res.sendStatus(500)
+    try {
+        const { id } = req.body;
+        if (id) {
+            const like = await Posts.like(id, res.locals.userId)
+            res.json(like)
+        } else {
+            res.sendStatus(500)
+        }
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+const post_dislike = async (req, res) => {
+    try {
+        const { id } = req.body;
+        if (id) {
+            const dislike = await Posts.dislike(id, res.locals.userId);
+            res.json(dislike);
+        } else {
+            res.sendStatus(500);
+        }
+    } catch (err) {
+        console.log(err)
     }
 }
 
@@ -68,4 +85,5 @@ module.exports = {
     post_get,
     post_like_check,
     post_like,
+    post_dislike
 }

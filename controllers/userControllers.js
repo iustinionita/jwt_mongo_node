@@ -1,6 +1,8 @@
 const Users = require('../models/Users');
 const jwt = require('jsonwebtoken');
 const outputUser = require('../models/outputUser');
+const { upload } = require('../controllers/imageControllers');
+const Images = require('../models/Images');
 
 const maxAge = 3 * 24 * 60 * 60;
 const createToken = (id) => {
@@ -55,6 +57,31 @@ const user_logout = (req, res) => {
     res.end();
 }
 
+const user_avatar = async (req, res) => {
+    try {
+        const up = upload('avatars_img');
+        up(req, res, async function (err) {
+            if (err) {
+                res.sendStatus(500)
+                console.log(err)
+            } else {
+                const image = await Images.create({
+                    user: res.locals.userId,
+                    filename: req.file.filename,
+                    mimetype: req.file.mimetype,
+                    destination: req.file.destination,
+                    path: req.file.path,
+                    size: req.file.size
+                })
+                const userAvatar = await Users.findByIdAndUpdate(res.locals.userId, {'avatar': {'filename': image.filename, 'path': image.path}});
+                res.sendStatus(200)
+            }
+        })
+    } catch (err) {
+        console.log(err)
+    }
+}
+
 // Get own posts
 const user_own_posts = async (req, res) => {
     const { skip } = req.body;
@@ -64,11 +91,11 @@ const user_own_posts = async (req, res) => {
             options: {
                 limit: 5,
                 skip: skip,
-                sort: {createdAt: -1}
+                sort: { createdAt: -1 }
             }
         }).exec();
         res.json(posts)
-    } catch(e) {
+    } catch (e) {
         console.log(e.message);
         res.json(e.message)
     }
@@ -84,5 +111,6 @@ module.exports = {
     user_login,
     user_logout,
     user_check,
+    user_avatar,
     user_own_posts
 }

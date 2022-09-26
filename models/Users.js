@@ -24,6 +24,18 @@ const userSchema = new Schema({
         type: String,
         unique: true
     },
+    avatar: {
+        filename: {
+            type: String,
+            required: true,
+            unique: true
+        },
+        path: {
+            type: String,
+            required: true,
+            unique: true,
+        }
+    },
     posts: [{
         type: Schema.Types.ObjectId,
         ref: 'Posts'

@@ -6,7 +6,6 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
-const fileUpload = require("express-fileupload");
 
 // Mongoose Setup
 mongoose.connect(process.env.DBURI,
@@ -22,18 +21,21 @@ mongoose.connect(process.env.DBURI,
 )
 
 // Middleware
-app.use(cors({credentials: true, origin: true}));
+app.use(cors({ credentials: true, origin: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// Statis directory
+app.use('/images/', express.static(__dirname + '/avatars_img'));
+app.use('/images/', express.static(__dirname + '/posts_img'));
 
 // Users Router
 app.use('/users/', userRoutes)
 
 // Posts Router
-app.use('/posts/', postRoutes);
+app.use('/bings/', postRoutes);
 
-app.post('/', fileUpload(), (req, res) => {
-    console.log(req.files)
+app.post('/', (req, res) => {
     res.send("This is the root")
 })
