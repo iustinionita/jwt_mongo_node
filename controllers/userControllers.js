@@ -22,7 +22,7 @@ const user_signup = async (req, res) => {
             email
         });
         const token = createToken(user._id);
-        res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
+        res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000, sameSite: 'None', secure: true });
         res.json(outputUser(user));
     } catch (e) {
         if (e.code === 11000) {
@@ -44,7 +44,7 @@ const user_login = async (req, res) => {
     try {
         const user = await Users.login(username, password);
         const token = createToken(user._id);
-        res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
+        res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000, sameSite: 'None',  secure: true });
         res.json(outputUser(user));
     } catch (e) {
         console.log(e.message)

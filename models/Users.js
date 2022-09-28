@@ -27,12 +27,10 @@ const userSchema = new Schema({
     avatar: {
         filename: {
             type: String,
-            required: true,
             unique: true
         },
         path: {
             type: String,
-            required: true,
             unique: true,
         }
     },

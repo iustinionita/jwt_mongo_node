@@ -13,8 +13,6 @@ const requireAuth = (req, res, next) => {
                 } else {
                     // console.log(decodedToken)
                     res.locals.userId = decodedToken.id
-
-                    // Optional: set local session user object
                     const user = await Users.findById(decodedToken.id);
                     res.locals.user = outputUser(user);
                     next()
@@ -26,7 +24,7 @@ const requireAuth = (req, res, next) => {
         }
     } catch (err) {
         console.log(err);
-        res.status(401).end;
+        res.status(401).end();
     }
 }
 

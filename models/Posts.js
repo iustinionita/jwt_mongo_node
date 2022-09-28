@@ -15,6 +15,14 @@ const postSchema = new Schema({
         type: String,
         required: true
     },
+    image: {
+        filename: {
+            type: String
+        },
+        path: {
+            type: String
+        }
+    },
     public: {
         type: Boolean,
         required: true,
